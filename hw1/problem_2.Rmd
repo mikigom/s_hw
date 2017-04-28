@@ -60,10 +60,9 @@ fit <- rpart(V1 ~ V2+V3+V4+V5+V6+V7+V8+V9+V10+V11+V12+V13+V14, method="class", d
 printcp(fit)
 ```
 
-Thus, Resubstitution error rate = 0.40985 * 0.61803 = 0.25330
+Thus, resubstitution error rate = 0.40985 * 0.61803 = 0.25330
 
 ```{r}
 library(rpart.plot)
 prp(fit, uniform=TRUE, main="Classification Tree for Housetype_Data")
 ```
-

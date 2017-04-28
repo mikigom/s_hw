@@ -70,3 +70,7 @@ summary(fit)
 library(rpart.plot)
 prp(fit, uniform=TRUE, main="Regression Tree for Income_Data ")
 ```
+
+```{r}
+print(fit)
+```

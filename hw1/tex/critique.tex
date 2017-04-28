@@ -1,6 +1,7 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage{times}
 \usepackage{mathtools}
+\usepackage{url}
 
 \begin{document}
 
@@ -9,9 +10,36 @@
 
 \maketitle
 
-\section{}
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
 
 \section{}
+The following points could be derived from my demography.
+\begin{itemize}
+\item The anuual income is predicted by four main variables: householder status, age, marital status, and occupation. This list is in order of variable importance.
+\item Those who do not have their own homes and are under the age of 20 are expected to have a household annual income of around \$17,500 or less.
+\item Those who do not have their own homes and are older than 20 years are expected to have a household annual income of \$17,500 or more but less than \$27,500.
+\item Those who have their own homes and are currently married or living together are expected to have a household annual income of less than \$32,500 and less than about \$50,000.
+\item A person who owns a house and is not currently married or living together is estimated to have a household annual income of \$22,500 or more and \$32,500 or less.
+\end{itemize}
+
+\subsection{}
+Surrogate splits were used in the optimal tree I obtained. This can be confirmed with the summary () function for the fitted model variable. Surrogate splits divide the missing data if the primary splits fail to divide the data for it. When missing data comes in as input to the model, surrogate split takes over the work done by the primary split and processes it. For example, let's look at detail for node 1 at the top of the summary() output. Node 1 divides data by householder status, and surrogate split of this node divides data by age.
+
+\subsection{}
+
+\emph{Blank}
+
+\section{}
+
+The following points could be derived from my demography.
+\begin{itemize}
+\item The house type is predicted by five main variables: persons in own household, household status, occupation, annual incom of household, and residence period. This list is in order of variable importance.
+\item Those who do not rent residence are expected to live in house.
+\item People who rent a residence and have more than three residents are expected to live in a house or apartment.
+\item People who rent a residence and have less than two residents are expected to live in an apartment or other type of home.
+\item My tree does not categorize two categories because data from people living in condominiums or mobile homes is very rare.
+\end{itemize}
+In classification tree, the n-fold(in my case, n=10) cross-validated error rate can be computed from a product of root node error and the last real error, which are shown as the output of printcp(). I got error estimation, the cross-validated error rate \(0.40985*0.61803 = 0.25330\).
 
 \section{}
 
@@ -74,4 +102,3 @@ Linear combination splits have the advantage of increasing the predictive power.
 The advantage of the multi-way splitting strategy is that it can be fitted with a shallow depth. The disadvantage is that at the higher level, too much data can be categorized too quickly, so underfitting can occur due to insufficient data. In addition, multiway split can be interpreted as a series of binary splits.
 
 \end{document}
-
