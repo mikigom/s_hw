@@ -1,0 +1,69 @@
+---
+title: "Homework 1 - Problem 2"
+output: html_notebook
+---
+
+To open ```Housetype_Data.txt```,
+
+```{r}
+housetype_data = read.csv("Housetype_Data.txt", header=FALSE)
+housetype_data[1:10, ]
+```
+
+Attribute information in ```Housetype_Data.txt``` is the following in column order.
+
+```
+1. TYPE OF HOME (Categorial)
+2. SEX (Categorial)
+3. MARITAL STATUS (Categorial)
+4. AGE (Numerical)
+5. EDUCATION (Numerical)
+6. OCCUPATION (Categorial)
+7. ANNUAL INCOME OF HOUSEHOLD (Numerical)
+8. HOW LONG HAVE YOU LIVED IN THE SAN FRAN./OAKLAND/SAN JOSE AREA? (Numerical)
+9. DUAL INCOMES (IF MARRIED) (Categorial)
+10. PERSONS IN YOUR HOUSEHOLD (Numerical)
+11. PERSONS IN HOUSEHOLD UNDER 18 (Numerical)
+12. HOUSEHOLDER STATUS (Categorial)
+13. ETHNIC CLASSIFICATION (Categorial)
+14. WHAT LANGUAGE IS SPOKEN MOST OFTEN IN YOUR HOME? (Categorial)
+```
+
+Let's control data taype on column by ```as.factor()``` and ```as.numeric()```.
+```{r}
+housetype_data[, 1] = as.factor(housetype_data[, 1])
+housetype_data[, 2] = as.factor(housetype_data[, 2])
+housetype_data[, 3] = as.factor(housetype_data[, 3])
+housetype_data[, 4] = as.numeric(housetype_data[, 4])
+housetype_data[, 5] = as.numeric(housetype_data[, 5])
+housetype_data[, 6] = as.factor(housetype_data[, 6])
+housetype_data[, 7] = as.numeric(housetype_data[, 7])
+housetype_data[, 8] = as.numeric(housetype_data[, 8])
+housetype_data[, 9] = as.factor(housetype_data[, 9])
+housetype_data[, 10] = as.numeric(housetype_data[, 10])
+housetype_data[, 11] = as.numeric(housetype_data[, 11])
+housetype_data[, 12] = as.factor(housetype_data[, 12])
+housetype_data[, 13] = as.factor(housetype_data[, 13])
+housetype_data[, 14] = as.factor(housetype_data[, 14])
+
+housetype_data[1:10, ]
+```
+
+Then, make a multi-class classfication tree by ```rpart``` on target variable ```V1```(Type of home).
+```{r}
+library(rpart)
+# To construct a classfication tree, set method="class".
+fit <- rpart(V1 ~ V2+V3+V4+V5+V6+V7+V8+V9+V10+V11+V12+V13+V14, method="class", data = housetype_data, control = rpart.control(cp = 0.0018))
+```
+
+```{r}
+printcp(fit)
+```
+
+Thus, Resubstitution error rate = 0.40985 * 0.61803 = 0.25330
+
+```{r}
+library(rpart.plot)
+prp(fit, uniform=TRUE, main="Classification Tree for Housetype_Data")
+```
+

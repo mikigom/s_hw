@@ -1,0 +1,72 @@
+---
+title: "Homework 1 - Problem 1"
+output: html_notebook
+---
+
+To open ```Income_Data.txt```,
+
+```{r}
+income_data = read.csv("Income_Data.txt", header=FALSE)
+income_data[1:10, ]
+```
+
+Attribute information in ```Income_Data.txt``` is the following in column order.
+
+```
+1. ANNUAL INCOME OF HOUSEHOLD (Numerical)
+2. SEX (Categorial)
+3. MARITAL STATUS (Categorial)
+4. AGE (Numerical)
+5. EDUCATION (Numerical)
+6. OCCUPATION (Categorial)
+7. HOW LONG HAVE YOU LIVED IN THE SAN FRAN./OAKLAND/SAN JOSE AREA? (Numerical)
+8. DUAL INCOMES (IF MARRIED) (Categorial)
+9. PERSONS IN YOUR HOUSEHOLD (Numerical)
+10. PERSONS IN HOUSEHOLD UNDER 18 (Numerical)
+11. HOUSEHOLDER STATUS (Categorial)
+12. TYPE OF HOME (Categorial)
+13. ETHNIC CLASSIFICATION (Categorial)
+14. WHAT LANGUAGE IS SPOKEN MOST OFTEN IN YOUR HOME? (Categorial)
+```
+
+Let's control data taype on column by ```as.factor()``` and ```as.numeric()```.
+
+```{r}
+income_data[, 1] = as.numeric(income_data[, 1])
+income_data[, 2] = as.factor(income_data[, 2])
+income_data[, 3] = as.factor(income_data[, 3])
+income_data[, 4] = as.numeric(income_data[, 4])
+income_data[, 5] = as.numeric(income_data[, 5])
+income_data[, 6] = as.factor(income_data[, 6])
+income_data[, 7] = as.numeric(income_data[, 7])
+income_data[, 8] = as.factor(income_data[, 8])
+income_data[, 9] = as.numeric(income_data[, 9])
+income_data[, 10] = as.numeric(income_data[, 10])
+income_data[, 11] = as.factor(income_data[, 11])
+income_data[, 12] = as.factor(income_data[, 12])
+income_data[, 13] = as.factor(income_data[, 13])
+income_data[, 14] = as.factor(income_data[, 14])
+
+income_data[1:10, ]
+```
+
+Then, make a regression tree by ```rpart``` on target variable ```V1```(Annual income of household).
+```{r}
+library(rpart)
+# Be sure of usage of surrogate splits 
+# To construct a regression tree, set method="anova".
+fit <- rpart(V1 ~ V2+V3+V4+V5+V6+V7+V8+V9+V10+V11+V12+V13+V14, method="anova", data = income_data, control = rpart.control(maxsurrogate = 5, usesurrogate = 2))
+```
+
+```{r}
+printcp(fit)
+```
+
+```{r}
+summary(fit)
+```
+
+```{r}
+library(rpart.plot)
+prp(fit, uniform=TRUE, main="Regression Tree for Income_Data ")
+```
