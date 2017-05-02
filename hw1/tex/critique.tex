@@ -39,7 +39,7 @@ The following points could be derived from my demography.
 \item People who rent a residence and have less than two residents are expected to live in an apartment or other type of home.
 \item My tree does not categorize two categories because data from people living in condominiums or mobile homes is very rare.
 \end{itemize}
-In classification tree, the n-fold(in my case, n=10) cross-validated error rate can be computed from a product of root node error and the last real error, which are shown as the output of printcp(). I got error estimation, the cross-validated error rate \(0.40985*0.61803 = 0.25330\).
+In classification tree, the n-fold(in my case, n=10) cross-validated error rate can be computed from a product of root node error and the last real error, which are shown as the output of printcp(). I got error estimation, the cross-validated error rate \(0.40985*0.63238 = 0.25918\).
 
 \section{}
 
@@ -99,6 +99,6 @@ Linear combination splits have the advantage of increasing the predictive power.
 
 \section{}
 
-The advantage of the multi-way splitting strategy is that it can be fitted with a shallow depth. The disadvantage is that at the higher level, too much data can be categorized too quickly, so underfitting can occur due to insufficient data. In addition, multiway split can be interpreted as a series of binary splits.
+The advantage of the multi-way splitting strategy is that it can be fitted with a shallow depth. The disadvantage is that at the higher level, too much data can be categorized too quickly, so underfitting can occur due to insufficient data. Moreover, multiway split can be interpreted as a series of binary splits.
 
 \end{document}
