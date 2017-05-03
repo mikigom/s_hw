@@ -61,7 +61,18 @@ However, overfitting problems can not be avoided because the learning process is
 
 \section{}
 
-\emph{On Handwriting}
+Misclassification risk is the following :
+
+\[L(y_k, \widehat{y}_k) = \sum_{k=1}^KI(y_k\neq\widehat{y}_k)\]
+\noindent
+where \(y_k\) is the predicted value and \(\widehat{y}_k\) is the true value of the outcome \(y\).
+
+Classification error rate is the follwoing :
+
+\[\frac{1}{K}\sum_{k=1}^KI(y_k\neq\widehat{y}_k) = \frac{L(y_k, \widehat{y}_k)}{K}\]
+\noindent
+Thus, misclassification risk reduces the classification error rate.
+
 
 \section{}
 
