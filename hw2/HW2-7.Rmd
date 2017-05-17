@@ -35,7 +35,7 @@ best.iter_train <- gbm.perf(gbm0, method = "cv")
 ```{r}
 # For test data
 gbm0.prediction <- predict(gbm0, california_data.test, type ="response", n.trees = best.iter_train)
-sqrt(mean((incomeData.test$income - gbm0.prediction)^2))
+sqrt(mean((california_data.test$house_value - gbm0.prediction)^2))
 ```
 
 ```{r}
