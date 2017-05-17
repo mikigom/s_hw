@@ -1,0 +1,58 @@
+---
+title: "HW2-9"
+output:
+  html_notebook: default
+  html_document: default
+---
+
+__Data Loading__
+
+
+```{r}
+occupation.data <- read.csv("occupation.data", header=FALSE,
+                  col.names = c("Occupation", "TypeOfHome", "Sex", "MaritalStatus", "Age",
+                        "Education", "AnnualIncome",
+                        "YearsInBayArea", "DualIncome", "PersonsInHousehold",
+                        "PersonsInHouseholdUnder18", "HouseholderStatus",
+                        "Ethnicity", "Language"
+                         ),
+                  colClasses = c('factor', 'factor', 'factor', 'factor', 'integer',
+                  'integer',  'integer', 'integer', 'factor', 'integer',
+                  'integer', rep('factor', 3))
+)
+
+set.seed(123)
+train = sample(1:nrow(occupation.data), nrow(occupation.data)*0.7)
+occupation.data.train = occupation.data[train,]
+occupation.data.test = occupation.data[-train,]
+```
+
+__Package Loading__
+```{r}
+library(gbm)
+require(caret)
+```
+
+__gbm function calling__
+```{r}
+set.seed(444) # Random for bag.fraction
+gbm0 <- gbm(Occupation~., data = occupation.data.train, train.fraction = 0.8, interaction.depth = 4, shrinkage = .05, n.trees = 2500, bag.fraction = 0.5, cv.folds = 5, distribution = "multinomial", verbose = T)
+```
+
+```{r}
+best.iter_train <- gbm.perf(gbm0, method = "cv")
+```
+
+__test set misclassification error__ 
+```{r}
+prediction = max.col(data.frame(predict(gbm0, occupation.data.test, type ="response", n.trees = best.iter_train)[,,1]))
+```
+
+```{r}
+mean(prediction == occupation.data.test$Occupation)
+```
+
+```{r}
+confusionMatrix(prediction, occupation.data.test$Occupation)
+```
+

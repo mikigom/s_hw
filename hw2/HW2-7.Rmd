@@ -1,0 +1,66 @@
+---
+title: "HW2-7"
+output: html_notebook
+---
+
+__Data Loading__
+```{r}
+california_data = read.csv("california.data", header=FALSE)
+
+cname = c("house_value", "Income", "Housing_Age", "No_Rooms", "No_Bedrooms", "Population", "Occupancy", "Latitude", "Longitude")
+colnames(california_data) = cname
+
+# Dividing the data into train - 70% and test - 30%
+set.seed(123)
+train = sample(1:nrow(california_data), nrow(california_data)*0.7)
+california_data.train = california_data[train,]
+california_data.test = california_data[-train,]
+```
+
+__Package Loading__
+```{r}
+library(gbm)
+```
+
+__gbm function calling__
+```{r}
+set.seed(444) # Random for bag.fraction
+gbm0 <- gbm(house_value~., data = california_data.train, train.fraction = 0.8, interaction.depth = 4, shrinkage = .05, n.trees = 2500, bag.fraction = 0.5, cv.folds = 5, distribution = "gaussian", verbose = T)
+```
+
+```{r}
+best.iter_train <- gbm.perf(gbm0, method = "cv")
+```
+
+```{r}
+# For test data
+gbm0.prediction <- predict(gbm0, california_data.test, type ="response", n.trees = best.iter_train)
+sqrt(mean((incomeData.test$income - gbm0.prediction)^2))
+```
+
+```{r}
+summary(gbm0, n.tree = best.iter_train, main="RELATIVE INFLUENCE OF ALL PREDICTORS")
+```
+
+```{r}
+names(california_data)
+```
+
+
+```{r}
+par(mfrow = c(2, 2))
+plot(x = gbm0, i.var = 1, n.trees = best.iter_train, main = "Partial Dependence of 'Median Income'")
+plot(x = gbm0, i.var = 6, n.trees = best.iter_train, main = "Partial Dependence of 'Average Occupancy")
+plot(x = gbm0, i.var = 8, n.trees = best.iter_train, main = "Partial Dependence of 'Longitude'")
+plot(x = gbm0, i.var = 7, n.trees = best.iter_train, main = "Partial Dependence of 'Latitude'")
+```
+
+```{r}
+par(mfrow = c(2, 3))
+plot(x = gbm0, i.var = c(1, 6), n.trees = best.iter_train, main = "Partial Dependence of 'Median Income' and 'Average Occupancy'")
+plot(x = gbm0, i.var = c(1, 8), n.trees = best.iter_train, main = "Partial Dependence of 'Median Income' and 'Longitude'")
+plot(x = gbm0, i.var = c(1, 7), n.trees = best.iter_train, main = "Partial Dependence of 'Median Income' and 'Lontitude'")
+plot(x = gbm0, i.var = c(6, 8), n.trees = best.iter_train, main = "Partial Dependence of 'Average Occupancy' and 'Longitude'")
+plot(x = gbm0, i.var = c(6, 7), n.trees = best.iter_train, main = "Partial Dependence of 'Average Occupancy' and 'Lontitude'")
+plot(x = gbm0, i.var = c(8, 7), n.trees = best.iter_train, main = "Partial Dependence of 'Longitude' and 'Lontitude'")
+```

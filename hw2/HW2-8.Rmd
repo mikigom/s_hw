@@ -1,0 +1,86 @@
+---
+title: "HW2-8"
+output:
+  html_notebook: default
+  html_document: default
+---
+
+__Data Loading__
+```{r}
+income_data = read.csv("Income_Data.txt", header=FALSE, quote=NULL)
+```
+
+1. ANNUAL INCOME OF HOUSEHOLD (Numerical)
+2. SEX (Categorial)
+3. MARITAL STATUS (Categorial)
+4. AGE (Numerical)
+5. EDUCATION (Numerical)
+6. OCCUPATION (Categorial)
+7. HOW LONG HAVE YOU LIVED IN THE SAN FRAN./OAKLAND/SAN JOSE AREA? (Numerical)
+8. DUAL INCOMES (IF MARRIED) (Categorial)
+9. PERSONS IN YOUR HOUSEHOLD (Numerical)
+10. PERSONS IN HOUSEHOLD UNDER 18 (Numerical)
+11. HOUSEHOLDER STATUS (Categorial)
+12. TYPE OF HOME (Categorial)
+13. ETHNIC CLASSIFICATION (Categorial)
+14. WHAT LANGUAGE IS SPOKEN MOST OFTEN IN YOUR HOME? (Categorial)
+
+```{r}
+cname = c("income","sex","marital_status","age","education","occupation","how_long_live","dual_imcome","persons_in_household","persons_under_18","householder_status","home_type","ethnic","language")
+
+colnames(income_data) = cname
+
+income_data[, 1] = as.numeric(income_data[, 1])
+income_data[, 2] = as.factor(income_data[, 2])
+income_data[, 3] = as.factor(income_data[, 3])
+income_data[, 4] = as.numeric(income_data[, 4])
+income_data[, 5] = as.numeric(income_data[, 5])
+income_data[, 6] = as.factor(income_data[, 6])
+income_data[, 7] = as.numeric(income_data[, 7])
+income_data[, 8] = as.factor(income_data[, 8])
+income_data[, 9] = as.numeric(income_data[, 9])
+income_data[, 10] = as.numeric(income_data[, 10])
+income_data[, 11] = as.factor(income_data[, 11])
+income_data[, 12] = as.factor(income_data[, 12])
+income_data[, 13] = as.factor(income_data[, 13])
+income_data[, 14] = as.factor(income_data[, 14])
+
+# Dividing the data into train - 70% and test - 30%
+set.seed(123)
+train = sample(1:nrow(income_data), nrow(income_data)*0.7)
+incomeData.train = income_data[train,]
+incomeData.test = income_data[-train,]
+```
+
+__Package Loading__
+```{r}
+library(gbm)
+```
+
+__gbm function calling__
+```{r}
+set.seed(444) # Random for bag.fraction
+gbm0 <- gbm(income~., data = incomeData.train, train.fraction = 0.8, interaction.depth = 4, shrinkage = .05, n.trees = 2500, bag.fraction = 0.5, cv.folds = 5, distribution = "gaussian", verbose = T)
+```
+
+```{r}
+best.iter_train <- gbm.perf(gbm0, method = "cv")
+```
+
+```{r}
+# For test data
+gbm0.prediction <- predict(gbm0, incomeData.test, type ="response", n.trees = best.iter_train)
+sqrt(mean((incomeData.test$income - gbm0.prediction)^2))
+```
+
+Compared to 2.063451, the accuracy arises.
+
+```{r}
+summary(gbm0, n.tree = best.iter_train, main="RELATIVE INFLUENCE OF ALL PREDICTORS")
+```
+
+The fact that influence of 'sex' is low does not conflict with US averages.
+According to ```Income_Info.txt```, the survey was conducted for shopping mall customers in the San Fransisco Bay area. Because it is a fairly local survey, the sample will not represent the US average.
+
+In addition, the income dependent on the house is about the family rather than the individual. 
+There is both woman and man in a family, so the standard of house income is not personalized.

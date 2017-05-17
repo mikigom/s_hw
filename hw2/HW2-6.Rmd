@@ -88,3 +88,16 @@ plot(gbm1, i.var = 23, n.trees = best.iter_train, main = "Partial Dependence of 
 ```{r}
 plot(gbm1, i.var = 52, n.trees = best.iter_train, main = "Partial Dependence of '!'")
 ```
+
+
+```{r}
+plot(gbm1, i.var = c(7, 23), n.trees = best.iter_train, main = "Partial Dependence on 'remove' and '000'")
+```
+
+```{r}
+plot(gbm1, i.var = c(23, 52), n.trees = best.iter_train, main = "Partial Dependence on '000' and '!'")
+```
+
+```{r}
+plot(gbm1, i.var = c(7, 52), n.trees = best.iter_train, main = "Partial Dependence on 'remove' and '!'")
+```
