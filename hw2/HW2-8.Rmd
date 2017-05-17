@@ -73,7 +73,7 @@ gbm0.prediction <- predict(gbm0, incomeData.test, type ="response", n.trees = be
 sqrt(mean((incomeData.test$income - gbm0.prediction)^2))
 ```
 
-Compared to 2.063451, the accuracy arises.
+Compared to 2.063451, the loss decreases.
 
 ```{r}
 summary(gbm0, n.tree = best.iter_train, main="RELATIVE INFLUENCE OF ALL PREDICTORS")
