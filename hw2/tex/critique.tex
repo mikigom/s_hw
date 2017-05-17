@@ -1,0 +1,42 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{times}
+\usepackage{mathtools}
+\usepackage{url}
+
+\begin{document}
+
+\title{Statistics 315B Homework 2}
+\author{Spring 2017}
+
+\maketitle
+
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+
+\section{}
+
+This answer is referred to in \cite{ho1998random}'s \textit{random subsampling method} and \cite{li2009weighted}.
+
+\subsection{Advantages}
+\begin{itemize}
+    \item Free from curse of dimensionality
+    \item The algorithm is scalable.(A parallel algorithm)
+    \item It does not get hit by bootstrapping or bagging in generalization.
+    \item Effectively eliminating the feature redundancy inherent in the data.
+    \item Effectively reducing the correlation between estimators.
+\end{itemize}
+
+\subsection{Disadvantages}
+\begin{itemize}
+    \item The original random subspace method did not emphasize the importance of selecting a base learner that should generalize well.
+\end{itemize}
+
+\subsection{}
+Bagging or bootstrapping is possible. However, some papers and work\cite{shlien1990multiple}\cite{shlien1992nonparametric} have also introduced parametric or nonparametric heuristic procedures or manual interventions.
+
+\section{}
+
+
+\bibliographystyle{plain}
+\bibliography{critique}
+
+\end{document}

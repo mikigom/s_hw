@@ -1,0 +1,25 @@
+\begin{thebibliography}{1}
+
+\bibitem{ho1998random}
+Tin~Kam Ho.
+\newblock The random subspace method for constructing decision forests.
+\newblock {\em IEEE transactions on pattern analysis and machine intelligence},
+  20(8):832--844, 1998.
+
+\bibitem{li2009weighted}
+Xiaoye Li and Hongyu Zhao.
+\newblock Weighted random subspace method for high dimensional data
+  classification.
+\newblock {\em Statistics and its Interface}, 2(2):153, 2009.
+
+\bibitem{shlien1990multiple}
+Seymour Shlien.
+\newblock Multiple binary decision tree classifiers.
+\newblock {\em Pattern Recognition}, 23(7):757--763, 1990.
+
+\bibitem{shlien1992nonparametric}
+Seymour Shlien.
+\newblock Nonparametric classification using matched binary decision trees.
+\newblock {\em Pattern Recognition Letters}, 13(2):83--87, 1992.
+
+\end{thebibliography}
