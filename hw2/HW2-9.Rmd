@@ -39,6 +39,8 @@ set.seed(444) # Random for bag.fraction
 gbm0 <- gbm(Occupation~., data = occupation.data.train, train.fraction = 0.8, interaction.depth = 4, shrinkage = .05, n.trees = 2500, bag.fraction = 0.5, cv.folds = 5, distribution = "multinomial", verbose = T)
 ```
 
+
+
 ```{r}
 best.iter_train <- gbm.perf(gbm0, method = "cv")
 ```
@@ -56,3 +58,6 @@ mean(prediction == occupation.data.test$Occupation)
 confusionMatrix(prediction, occupation.data.test$Occupation)
 ```
 
+```{r}
+summary(gbm0, n.tree = best.iter_train, main="RELATIVE INFLUENCE OF ALL PREDICTORS")
+```
