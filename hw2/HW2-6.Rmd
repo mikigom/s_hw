@@ -28,7 +28,7 @@ library(caret)
 __gbm function calling__
 ```{r}
 set.seed(444) # Random for bag.fraction
-gbm0 <- gbm(spam_nonspam~., data = spam_train, train.fraction = 0.8, interaction.depth = 4, shrinkage = .05, n.trees = 2500, bag.fraction = 0.5, cv.folds = 5, distribution = "bernoulli", verbose = T)
+gbm0 <- gbm(spam_nonspam~., data = spam_train, train.fraction = 1.0, interaction.depth = 4, shrinkage = .05, n.trees = 2500, bag.fraction = 0.5, cv.folds = 5, distribution = "bernoulli", verbose = T)
 ```
 
 ```{r}
@@ -50,21 +50,50 @@ confusionMatrix(gbm0.prediction > 1/2, spam_test$spam_nonspam == 1)
 ```
 
 __Weighted Costs__
+
 ```{r}
+if(FALSE){
 set.seed(444) # Random for bag.fraction
 
-f <- function(x){if(x == 0){return(25)} else{return(1)}}
+grid <- expand.grid(cost = c(25, 50, 75, 100), depth = c(1, 2, 3, 4, 5, 6), shrinkage = c(0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.040, 0.045, 0.05), minobsinnode = c(5, 10, 15))
+grid = grid[sample(nrow(grid)), ]
 
-gbm1 <- gbm(spam_nonspam~., data = spam_train, train.fraction = 0.8, weights = unlist(Map(f, spam_train$spam_nonspam)), interaction.depth = 4, shrinkage = .05, n.trees = 2500, bag.fraction = 0.5, cv.folds = 5, distribution = "bernoulli", verbose = T)
+for(i in 1:nrow(grid)){
+  case = tryCatch({
+    each_point = grid[i, ]
+    f <- function(x){if(x == 0){return(each_point$cost)} else{return(1)}}
+    
+    gbm1 <- gbm(spam_nonspam~., data = spam_train, train.fraction = 1.0, weights = unlist(Map(f, spam_train$spam_nonspam)), interaction.depth = each_point$depth, shrinkage = each_point$shrinkage, n.minobsinnode = each_point$minobsinnode, n.trees = 4000, bag.fraction = 0.5, cv.folds = 5, distribution = "bernoulli", verbose = T)
+    
+    best.iter_train <- gbm.perf(gbm1, method = "cv", plot.it = FALSE)
+    
+    # For training data
+    gbm1.prediction <- predict(gbm1, spam_test, type ="response", n.trees = best.iter_train)
+    cm <- confusionMatrix(gbm1.prediction > 1/2, spam_test$spam_nonspam == 1)
+    #print(cm)
+    if(as.list(cm$byClass)$Sensitivity > 0.997){
+      print(each_point)
+      break
+    }
+  })
+}
+}
+```
 
-best.iter_train <- gbm.perf(gbm1, method = "cv")
+```{r}
+f <- function(x){if(x == 0){return(75)} else{return(1)}}
+    
+gbm1 <- gbm(spam_nonspam~., data = spam_train, train.fraction = 1.0, weights = unlist(Map(f, spam_train$spam_nonspam)), interaction.depth = 1, shrinkage = 0.025, n.minobsinnode = 5, n.trees = 4000, bag.fraction = 0.5, cv.folds = 5, distribution = "bernoulli", verbose = T)
+    
+best.iter_train <- gbm.perf(gbm1, method = "cv", plot.it = FALSE)
 ```
 
 __Confusion table of test data__
 ```{r}
 # For training data
 gbm1.prediction <- predict(gbm1, spam_test, type ="response", n.trees = best.iter_train)
-confusionMatrix(gbm1.prediction > 1/2, spam_test$spam_nonspam == 1)
+cm <- confusionMatrix(gbm1.prediction > 1/2, spam_test$spam_nonspam == 1)
+cm
 ```
 
 __Important variables__
