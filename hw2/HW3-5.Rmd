@@ -118,17 +118,17 @@ for(i in 1:nrow(grid)){
     cm = confusionMatrix(data = c(predicted), reference = as.numeric(spam_test$spam_nonspam))
     sensitivity_list[[i]] = as.list(cm$byClass)$Sensitivity
     print(as.list(cm$byClass)$Sensitivity)
-    if(as.list(cm$byClass)$Sensitivity > 0.99 && as.list(cm$byClass)$Specificity > 0.5){
+    print(as.list(cm$byClass)$Specificity)
+    if(as.list(cm$byClass)$Sensitivity > 0.99 && as.list(cm$byClass)$Specificity > 0.8){
       print(each_point)
       print(cm)
       break
     }
   }
-#}
 ```
 
 ```{r}
 print(each_point)
 print(nn)
-cm
+print(cm)
 ```
