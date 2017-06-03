@@ -1,0 +1,134 @@
+---
+title: "HW2-6"
+output:
+  html_notebook: default
+  html_document: default
+---
+
+__Data Loading__
+```{r}
+spam_train = read.csv("spam.train", header = FALSE)
+spam_test = read.csv("spam.test", header = FALSE)
+# Shuffle row-wise
+set.seed(131)
+spam_train = spam_train[sample(nrow(spam_train)),]
+spam_test = spam_test[sample(nrow(spam_test)),]
+
+cname = c("word_freq_make","word_freq_address","word_freq_all","word_freq_3d","word_freq_our","word_freq_over","word_freq_remove","word_freq_internet","word_freq_order","word_freq_mail","word_freq_receive","word_freq_will","word_freq_people","word_freq_report","word_freq_addresses","word_freq_free","word_freq_business","word_freq_email","word_freq_you","word_freq_credit","word_freq_your","word_freq_font","word_freq_000","word_freq_money","word_freq_hp","word_freq_hpl","word_freq_george","word_freq_650","word_freq_lab","word_freq_labs","word_freq_telnet","word_freq_857","word_freq_data","word_freq_415","word_freq_85","word_freq_technology","word_freq_1999","word_freq_parts","word_freq_pm","word_freq_direct","word_freq_cs","word_freq_meeting","word_freq_original","word_freq_project","word_freq_re","word_freq_edu","word_freq_table","word_freq_conference","char_freq_;","char_freq_(","char_freq_[","char_freq_exclamation","char_freq_$","char_freq_#","capital_run_length_average","capital_run_length_longest","capital_run_length_total","spam_nonspam")
+colnames(spam_train) = cname
+colnames(spam_test) = cname
+```
+
+__Package Loading__
+```{r}
+library(nnet)
+```
+
+__Standarizing Data__
+```{r}
+spam_train[, -c(ncol(spam_train))] = data.frame(scale(spam_train[, -c(ncol(spam_train))]))
+spam_test[, -c(ncol(spam_test))] = data.frame(scale(spam_test[, -c(ncol(spam_test))]))
+```
+
+__Training__
+```{r}
+model_list = list()
+for(i in c(1:10)){
+  model_list[[i]] <- nnet(spam_train[-ncol(spam_train)], spam_train[ncol(spam_train)], size = i, rang = 0.5, maxit = 300)
+}
+```
+
+__Testing__
+```{r}
+predict_list = list()
+for(i in c(1:10)){
+  predicted = predict(model_list[[i]], spam_test[-ncol(spam_test)], type="raw")
+  predicted[predicted < 0.5] <- 0
+  predicted[predicted >= 0.5] <- 1
+  predict_list[[i]] = predicted
+}
+```
+
+```{r}
+library(caret)
+
+cm_list = list()
+for(i in c(1:10)){
+  cm_list[[i]] = confusionMatrix(data = c(predict_list[[i]]), 
+                                 reference = as.numeric(spam_test$spam_nonspam))
+  print(i)
+  print((cm_list[[i]]$overall['Accuracy']))
+}
+```
+
+model[[5]](with 5 hidden units) works best.
+
+__Training and Testing with weight decay__
+```{r}
+regularized_model_list = list()
+for(i in c(0:10)){
+  regularized_model_list[[i+1]] <- nnet(spam_train[-ncol(spam_train)], spam_train[ncol(spam_train)], size = 6, rang = 0.5, maxit = 300, decay = i*0.1)
+}
+
+predict_list = list()
+for(i in c(0:10)){
+  predicted = predict(regularized_model_list[[i+1]], spam_test[-ncol(spam_test)], type="raw")
+  predicted[predicted < 0.5] <- 0
+  predicted[predicted >= 0.5] <- 1
+  predict_list[[i+1]] = predicted
+  }
+cm_list = list()
+for(i in c(0:10)){
+  cm_list[[i+1]] = confusionMatrix(data = c(predict_list[[i+1]]), 
+                                 reference = as.numeric(spam_test$spam_nonspam))
+  print(0.1*i)
+  print((cm_list[[i+1]]$overall['Accuracy']))
+}
+```
+
+
+```{r}
+regularized_model_list[[2]]
+cm_list[[2]]
+```
+
+```{r}
+#if(FALSE){
+set.seed(444)
+
+grid <- expand.grid(cost = c(0.95, 0.90, 0.85, 0.80), size = c(5, 10, 15, 20, 25, 30, 35, 40, 45, 50), decay = c(0.05, 0.1, 0.15, 0.20, 0.25, 0.30), maxit = c(50, 100, 150, 200, 250, 300, 350, 400, 450, 500))
+grid = grid[sample(nrow(grid)), ]
+
+sensitivity_list = list()
+for(i in 1:nrow(grid)){
+    each_point = grid[i, ]
+    
+    f <- function(x){if(x == 0){return(each_point$cost)} else{return(1-each_point$cost)}}
+    
+    
+    # He's initialization
+    init_weight = c(rnorm((57+1)*each_point$size, 0, 1./57), rnorm(each_point$size + 1, 0, 1./each_point$size))
+    
+    nn <- nnet(spam_train[-ncol(spam_train)], spam_train[ncol(spam_train)], size = each_point$size, weights = unlist(Map(f, spam_train$spam_nonspam)), Wts = init_weight, maxit = each_point$size, decay = each_point$decay, entropy = TRUE, MaxNWts = 100000)
+    
+    predicted = predict(nn, spam_test[-ncol(spam_test)], type="raw")
+    predicted[predicted < 0.5] <- 0
+    predicted[predicted >= 0.5] <- 1
+    
+    cm = confusionMatrix(data = c(predicted), reference = as.numeric(spam_test$spam_nonspam))
+    sensitivity_list[[i]] = as.list(cm$byClass)$Sensitivity
+    print(as.list(cm$byClass)$Sensitivity)
+    if(as.list(cm$byClass)$Sensitivity > 0.99 && as.list(cm$byClass)$Specificity > 0.5){
+      print(each_point)
+      print(cm)
+      break
+    }
+  }
+#}
+```
+
+```{r}
+print(each_point)
+print(nn)
+cm
+```
